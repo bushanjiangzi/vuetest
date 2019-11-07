@@ -39,7 +39,7 @@
     },
     mounted(){
       commen.hello();
-      commen.name('feifei');
+      commen.name('fei');
     }
   }
 </script>
