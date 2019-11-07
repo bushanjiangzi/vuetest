@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Generator</title>
+</head>
+<body>
+  <div>HelloWord</div>
+
+  <script src="../js/jquery.js"></script>
+  <script>
+    $(function () {
+      var fun1=function () {
+        console.log("fun1");
+      };
+      var fun2=function () {
+        console.log("fun2");
+      };
+      function* generator() {
+        fun1();
+        yield "why?";
+        fun2();
+        yield "what?";
+
+      }
+      var obj=generator();
+      console.log("第一次调用next():");
+      obj.next();
+      console.log("第二次调用next():");
+      obj.next();
+
+      console.log("next方法参数foo：")
+      function* foo(x) {
+        var y=2*(yield(x+1));
+        var z=yield(y/3);
+        return (x+y+z);
+      }
+      var a=foo(5);
+      a.next()
+    })
+
+  </script>
+</body>
+</html>

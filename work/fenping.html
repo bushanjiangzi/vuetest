@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0" />
+  <meta name="format-detection" content="telephone=no" />
+  <meta content="yes" name="mobile-web-app-capable">
+  <meta content="yes" name="apple-mobile-web-app-capable" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <title>移动端整页滑屏示例</title>
+  <style type="text/css">
+    *{
+      padding:0;
+      margin:0;
+      touch-action: pan-y;
+    }
+    body,html{
+      height:100%;
+      background-color:#000
+    }
+    .wrap{
+      width:100%;
+      height:100%;
+      overflow:hidden
+    }
+    .wrap2{
+      width:100%;
+      height:1000%;
+      transition:.3s linear
+    }
+    .page{
+      width:100%;
+      height:10%;
+      background-color:#fdfdfd;
+      font-size:100px;
+      line-height:400px;
+      text-align:center;
+      font-weight:700
+    }
+  </style>
+</head>
+<body>
+<div class="wrap" id="wrap">
+  <div class="wrap2" id="wrap2">
+    <div class="page">我是第一屏内容</div>
+    <div class="page" style="background-color:#ccc;">
+      <div>我是第二屏内容</div>
+      <div>
+
+      </div>
+      <div></div>
+    </div>
+    <div class="page">我是第三屏内容</div>
+    <div class="page" style="background-color:#ccc;">我是第四屏内容</div>
+    <div class="page">我是第五屏内容</div>
+    <div class="page" style="background-color:#ccc;">我是第六屏内容</div>
+  </div>
+</div>
+<!--<script src="js/touchmove.js"></script>-->
+<script src="js/rong.js"></script>
+<script type="text/javascript">
+  // pages({
+  //   wrap: 'wrap', //.wrap的id
+  //   wrap2: 'wrap2', //.wrap2的id
+  //   len: 6, //一共有几页
+  //   n: 0 //页面一打开默认在第几页？第一页就是0，第二页就是1
+  // });
+  rong.touchPages( 'wrap','wrap2',6, 3 )
+</script>
+</body>
+
+</html>
+

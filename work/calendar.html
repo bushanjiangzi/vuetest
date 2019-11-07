@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>创建日历</title>
+    <meta name="viewport" content="width=device-width initial-scale=1">
+  <style>
+    body {
+      background: #F7F7F7;
+      margin: 0;
+      padding: 0;
+    }
+
+    ul, li {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .box {
+      width: 98%;
+      margin: 0.4166666rem auto;
+    }
+
+    .box > .curr-time {
+      line-height: 2.5rem;
+      text-align: center;
+      font-size: 1.5rem;
+      background: gold;
+      color: #fff;
+    }
+
+    .box > .show {
+      display: flex;
+      flex: 7;
+      height: 2.5rem;
+      line-height: 2.5rem;
+    }
+
+    .box > .show > div {
+      height: 100%;
+      text-align: center;
+    }
+
+    div.prev-btn, div.next-btn {
+      flex: 1;
+      cursor: pointer;
+      color: #aaa;
+    }
+
+    div.curr-text {
+      flex: 5;
+    }
+
+    .box > ul {
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      overflow: hidden;
+    }
+
+    .box > ul > li {
+      width: 14.285%;
+      text-align: center;
+      position: relative;
+      font-size: 1rem;
+      padding: 0.2rem 0;
+    }
+
+    .box > ul > li > div{
+      margin: 0 auto;
+    }
+    li.curr.active {
+      cursor: pointer;
+    }
+
+    .date > li {
+      height: 1rem;
+      font-size: 1.25rem !important;
+      font-weight: 400;
+      color: rgba(142,142,142,1);
+      line-height: 1.42rem;
+      padding-bottom: 0.5rem !important;
+    }
+
+    .eday {
+      text-align: center;
+      height: 3.8rem;
+      width: 3.8rem;
+      margin: 0;
+      display: -webkit-box;
+      -webkit-box-orient: horizontal;
+      -webkit-box-pack: center;
+      -webkit-box-align: center;
+      position: relative;
+    }
+
+    li.active > .eday {
+      background: #5ECDAF;
+      color: #fff;
+      border-radius: 50%;
+      border: 0.2rem solid #98efd8;
+    }
+
+    li.full > .eday {
+      background: #8E8E8E;
+      color: #fff;
+      border: 0.2rem solid #c6bebe;
+      border-radius: 50%;
+    }
+
+    .inner > p:first-child {
+      height: 1.13rem;
+      font-size: 1.5rem;
+      font-weight: 400;
+      color: rgba(31,31,31,1);
+      line-height: 1.13rem;
+    }
+
+    .prev p:first-child, .next p:first-child {
+      color: rgba(193,193,193,1);
+    }
+
+    .nl {
+      letter-spacing: 0.083333rem;
+      height: 0.96rem;
+      font-size: 1rem;
+      font-weight: 400;
+      color: rgba(195,195,195,1);
+      line-height: 1.5rem;
+      margin-top: -20px;
+    }
+
+    li.active .num, li.full .num {
+      position: absolute;
+      top: -0.25rem;
+      right: -0.333333rem;
+      font-size: 0.92rem !important;
+      background-color: #868BFF;
+      width: 1.5rem;
+      height: 1.5rem;
+      line-height: 1.5rem;
+      background: rgba(134,139,255,1);
+      border-radius: 50%;
+      color: #fff;
+      text-align: center;
+    }
+
+    li.full > .num {
+      background-color: #8E8E8E;
+    }
+
+    li.active p, li.full p {
+      color: #fff !important;
+    }
+
+    li.curday p:first-child {
+      color: #5ECDAF;
+    }
+
+    li.curday > .eday:after {
+      content: " ";
+      position: absolute;
+      left: 1.8rem;
+      bottom: -15px;
+      width: 0.29rem;
+      height: 0.29rem;
+      background: rgba(94,205,175,1);
+      border-radius: 50%;
+      text-align: center;
+      z-index: 99999;
+    }
+
+  </style>
+</head>
+<body>
+<div class="box">
+  <div class="curr-time"></div>
+  <div class="show">
+    <div class="prev-btn disabled"><<</div>
+    <div class="curr-text"></div>
+    <div class="next-btn">>></div>
+  </div>
+  <ul class="date">
+    <li>日</li>
+    <li>一</li>
+    <li>二</li>
+    <li>三</li>
+    <li>四</li>
+    <li>五</li>
+    <li>六</li>
+  </ul>
+  <ul class="day" id="calendar-conent"></ul>
+</div>
+<script src="js/jquery.js"></script>
+<script src="js/calendar.js"></script>
+<script>
+  $(function () {
+    //
+    var dateFun = function (d) {
+      var year = "" + d.getFullYear();
+      var month = "" + (d.getMonth() + 1);
+      if (month.length == 1) {
+        month = "0" + month;
+      }
+      var day = "" + d.getDate();
+      if (day.length == 1) {
+        day = "0" + day;
+      }
+      return year + "-" + month + "-" + day;
+    };
+
+    //创建日历
+    var createCalendar = function () {
+      var calendar = document.getElementById("calendar-conent");
+      var prevbtn = document.getElementsByClassName("prev-btn")[0];
+      var nextbtn = document.getElementsByClassName("next-btn")[0];
+      var nowDate = dateFun(new Date()); //今天的日期（年-月-日）
+
+      var selectYear = 0;//选择的年份
+      var selectMonth = 0;//选择的月份
+
+
+      //创建日历表内容
+      var createDays = function (date) {
+
+        calendar.innerHTML = "";
+        selectYear = date.getFullYear(); //年
+        selectMonth = date.getMonth();  //月
+        $(".curr-text").text(selectYear + "年 " + (selectMonth + 1) + "月");
+        var firstDay = new Date(selectYear, selectMonth, 1);//选择月的第一天(返回上一个月最后一天)
+        var dayOfWeek = firstDay.getDay(); //本月第一天是星期几（星期天为0）
+        firstDay.setDate(firstDay.getDate() - dayOfWeek);//日历表的第一天
+        console.log("firstDay:" + firstDay, "dayOfWeek:" + dayOfWeek, "firstDay.getDate():" + firstDay.getDate());
+        var className = "";
+        for (let i = 0; i < 42; i++) {
+          if (firstDay.getMonth() < selectMonth) {
+            className = "prev";
+          }
+          else if (firstDay.getMonth() == selectMonth) {
+            className = "curr";
+            if (dateFun(firstDay) == nowDate) {
+              className = "curr curday";
+            }
+          }
+          else {
+            className = "next";
+          }
+          createDayDiv(className, dateFun(firstDay));
+          firstDay.setDate(firstDay.getDate() + 1);
+        }
+
+      }
+
+
+      prevbtn.onclick = function () {
+        if (!$(this).hasClass("disabled")) {
+          var newDate = new Date(selectYear, selectMonth - 1, 1);
+          createDays(newDate);
+          $(this).addClass("disabled");
+          $(".next-btn").removeClass("disabled");
+        }
+      };
+
+      nextbtn.onclick = function () {
+        if (!$(this).hasClass("disabled")) {
+          var newDate = new Date(selectYear, selectMonth + 1, 1);
+          createDays(newDate);
+          $(this).addClass("disabled");
+          $(".prev-btn").removeClass("disabled");
+        }
+      };
+
+
+      //创建每一天的div
+      var createDayDiv = function (className, date) {
+        var li = document.createElement("li");
+        li.className = className;
+        var day = date.substr(8);
+        day = day < 10 ? day.substr(1) : day;
+        var nl = calendarToNL.solar2lunarByStr(date).IDayCn;
+        li.innerHTML = "<div class='eday'><div class=\"inner\"><p>" + day + "</p><p class=\"nl\">" + nl +"</p></div></div>";
+        li.setAttribute("data-curr", date);
+        //给每一天绑定点击事件
+
+        // var m = parseInt(date.substr(5, 2));
+        // // var s = selectMonth+1;
+        // var allP = 0;
+        // for (let i = 0; i < doctorInfo.plans.length; i++) {
+        //   let plan = doctorInfo.plans[i];
+        //   if (date == plan.planDate && m == selectMonth + 1) {
+        //     allP = plan.leftPeopleInMorn + plan.leftPeopleInAftn + plan.leftPeopleInEven;
+        //     if (allP > 0) {
+        //
+        //       $(li).addClass("active").find(".eday").append("<span class=\"num\">" + allP + "</span>").on("click", function () {
+        //         onSelectDay(doctorInfo.plans[i]);
+        //       })
+        //     }
+        //     else {
+        //       $(li).addClass("full").find(".eday").append("<span class=\"num\">满</span>");
+        //     }
+        //     break;
+        //   }
+        // }
+
+        calendar.appendChild(li);
+      };
+
+      //选择某一天的弹出框
+      // var onSelectDay = function (plan) {
+      //
+      //   var selectItems = [];
+      //   var text = "";
+      //   var isDisable = false;
+      //   var defaultValue = 0;
+      //   if (plan.isCanOrderMorn) {
+      //     if (plan.leftPeopleInMorn > 0) {
+      //       text = "上午(可预约" + plan.leftPeopleInMorn + "人)";
+      //       isDisable = false;
+      //       defaultValue = 1;
+      //     }
+      //     else {
+      //       text = "上午(约满)";
+      //       isDisable = true;
+      //     }
+      //
+      //   }
+      //   else {
+      //     text = "上午(未设排班)";
+      //     isDisable = true;
+      //   }
+      //   selectItems.push({
+      //     label: text,
+      //     disabled: isDisable,
+      //     value: 1
+      //   })
+
+
+        // if (plan.isCanOrderAftn) {
+        //   if (plan.leftPeopleInAftn > 0) {
+        //     text = "下午(可预约" + plan.leftPeopleInAftn + "人)";
+        //     isDisable = false;
+        //     if (defaultValue == 0) {
+        //       defaultValue = 2;
+        //     }
+        //   }
+        //   else {
+        //     text = "下午(约满)";
+        //     isDisable = true;
+        //   }
+        // }
+        // else {
+        //   text = "下午(未设排班)";
+        //   isDisable = true;
+        // }
+        // selectItems.push({
+        //   label: text,
+        //   disabled: isDisable,
+        //   value: 2
+        // })
+        //
+        // if (plan.isCanOrderEven) {
+        //   if (plan.leftPeopleInEven > 0) {
+        //     text = "晚上(可预约" + plan.leftPeopleInEven + "人)";
+        //     isDisable = false;
+        //     if (defaultValue == 0) {
+        //       defaultValue = 3;
+        //     }
+        //   }
+        //   else {
+        //     text = "晚上(约满)";
+        //     isDisable = true;
+        //   }
+        // }
+        // else {
+        //   text = "晚上(未设排班)";
+        //   isDisable = true;
+        // }
+        // selectItems.push({
+        //   label: text,
+        //   disabled: isDisable,
+        //   value: 3
+        // })
+
+      //   weui.picker(selectItems, {
+      //     defaultValue: [defaultValue],
+      //     onConfirm: function (result) {
+      //       var timePart = result[0].value == 1 ? "上午" : (result[0].value == 2 ? "下午" : "晚上");
+      //       yyVUE.saveInfo.orderTime = plan.planDate + " " + timePart;
+      //     },
+      //     id: plan.planDate
+      //   });
+      // }
+
+      createDays(new Date());
+    }
+
+    createCalendar();
+  })
+</script>
+</body>
+</html>

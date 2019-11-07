@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <!--<link rel="stylesheet" href="css/TimeRoulette.css">-->
+  <style>
+    *{
+      padding: 0;
+      margin: 0;
+      color: #eee;
+      user-select: none;
+    }
+    body {
+      background: #bebebe;
+      background-image: url(static/img/bg0.png);
+      background-repeat: no-repeat;
+      background-position:top;
+      background-attachment:fixed;
+    }
+    ul {
+      list-style: none;
+    }
+    li {
+      position: absolute;
+      display: inline-block;
+    }
+    .wrapper {
+      overflow: hidden;
+      height: 100vh;
+      box-sizing: border-box;
+      padding-top: 50px;
+    }
+    .timeBox {
+      margin: 5px auto;
+      width: 800px;
+      height: 800px;
+      /* background: #ccc; */
+      position: relative;
+    }
+    .wrapper .workTitle {
+      color: #878787;
+      font-family: Arial, Helvetica, sans-serif;
+      text-align: center;
+      line-height: 2em;
+      letter-spacing: .3em;
+    }
+    .wrapper .one-text {
+      color: #dbdbdb;
+      text-align: center;
+      font-size: 18px;
+      font-style: italic;
+      text-shadow: 8px 7px 4px rgba(100,150,200,0.8);
+      letter-spacing: .2em;
+    }
+    .timeBox .week-wrapper {
+      transition: 1s;
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      top: 300px;
+      left: 300px;
+      z-index: 9;
+    }
+    .timeBox .week-wrapper .week-content li {
+      width: 50px;
+    }
+    .timeBox .hours-wrapper {
+      transition: ease 1s;
+      position: absolute;
+      width: 350px;
+      height: 350px;
+      top: 225px;
+      left: 225px;
+      z-index: 8;
+    }
+    .timeBox .hours-wrapper .hours-content li {
+      width: 50px;
+    }
+    .timeBox .minutes-wrapper {
+      transition: 1s;
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      top: 150px;
+      left: 150px;
+      z-index: 7;
+    }
+    .timeBox .minutes-wrapper .minutes-content li {
+      width: 50px;
+    }
+    .timeBox .seconds-wrapper {
+      transition: all 1s linear;
+      position: absolute;
+      width: 650px;
+      height: 650px;
+      top: 75px;
+      left: 75px;
+      z-index: 6;
+    }
+    .timeBox .seconds-wrapper .seconds-content li {
+      transition: .5s;
+      width: 50px;
+    }
+    .timeBox .year-wrapper {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      position: absolute;
+      top:50%;
+      left: 50%;
+      transform: translate(-50%,-50%);
+      cursor: pointer;
+      z-index: 10;
+    }
+    .timeBox .year-wrapper p {
+      text-align: center;
+      line-height: 80px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .timeBox .year-wrapper::after {
+      content:"";
+      display: block;
+      width: 300px;
+      height: 26px;
+      /* background:rgba(139,90,43); */
+      /* border:1px solid #aaa;
+      border-radius: 3px; */
+      position: absolute;
+      top:27px;
+      left: 80px;
+    }
+    .active {
+      /* color: rgb(139,90,43); */
+      color: #FF7F00;
+    }
+    @media screen and (max-width:700px) {
+      .wrapper .timeBox {
+        transform: scale(0.5,0.5) translate(-50%,-50%);
+        margin: 0 auto;
+      }
+      .wrapper .timeBox ul li {
+        font-size:16px;
+      }
+    }
+  </style>
+  <title>时间轮盘</title>
+</head>
+<body>
+<div class="wrapper">
+  <h1 class="workTitle">时间轮盘</h1>
+  <p class="one-text">天可补，海可填，南山可移，日月既往,不可复追。</p>
+  <div class="timeBox">
+    <div class="year-wrapper" title="点击更换背景图片">
+      <p></p>
+    </div>
+    <div class="week-wrapper">
+      <ul class="week-content">
+
+      </ul>
+    </div>
+    <div class="hours-wrapper">
+      <ul class="hours-content">
+
+      </ul>
+    </div>
+    <div class="minutes-wrapper">
+      <ul class="minutes-content">
+
+      </ul>
+    </div>
+    <div class="seconds-wrapper">
+      <ul class="seconds-content">
+
+      </ul>
+    </div>
+  </div>
+</div>
+</body>
+<script src="js/jquery.js"></script>
+<!--<script src="js/TimeRoulette.js"></script>-->
+<script>
+  var rotateIndexH = 0;
+  var rotateIndexM = 0;
+  var rotateIndexS = 0;
+  init();
+
+  function init() {
+
+    // 更换背景图片
+    $(".timeBox .year-wrapper").click(function () {
+      // $("body").css("background-image", "url(images/background" + Math.ceil(Math.random() * 4) + ".jpg)")
+    })
+    // 设置文本值
+    setNumText();
+
+    // 设置干支纪年时间
+    var nowYear = (new Date).getFullYear();
+    var acientYear = toAncientYear(nowYear);
+    $(".year-wrapper p").text(acientYear).attr("title", "公元" + nowYear + "农历" + acientYear + "年");
+
+    // 初始化内容位置，旋转到指定角度
+    var weekLen = $(".week-content li").length;
+    // console.log(weekLen);
+
+    var weekDeg = 360 / weekLen;
+    $(".week-content li").each(function (index) {
+      $(this).css({
+        "transform": "rotate(" + index * weekDeg + "deg)",
+        "transform-origin": "-100% 50%",
+        "margin-left": parseInt($(this).css("width")) * 3 + "px",
+        "margin-top": parseInt($(this).css("width")) * 2 - 10 + "px"
+      })
+    })
+
+    // 时
+    var hoursLen = $(".hours-content li").length;
+    var hoursDeg = 360 / hoursLen;
+    $(".hours-content li").each(function (index) {
+      $(this).css({
+        "transform": "rotate(" + index * hoursDeg + "deg)",
+        "transform-origin": "-250% 50%",
+        "margin-left": parseInt($(this).css("width")) * 6 + "px",
+        "margin-top": parseInt($(this).css("width")) * 3.5 - 10 + "px"
+      })
+    })
+
+    //分
+    var minutesLen = $(".minutes-content li").length;
+    var minutesDeg = 360 / minutesLen;
+    $(".minutes-content li").each(function (index) {
+      $(this).css({
+        "transform": "rotate(" + index * minutesDeg + "deg)",
+        "transform-origin": "-400% 50%",
+        "margin-left": parseInt($(this).css("width")) * 9 + "px",
+        "margin-top": parseInt($(this).css("width")) * 5 - 10 + "px"
+      })
+    })
+
+    //秒
+    var secondsLen = $(".seconds-content li").length;
+    var secondsDeg = 360 / secondsLen;
+    $(".seconds-content li").each(function (index) {
+      $(this).css({
+        "transform": "rotate(" + index * secondsDeg + "deg)",
+        "transform-origin": "-550% 50%",
+        "margin-left": parseInt($(this).css("width")) * 12 + "px",
+        "margin-top": parseInt($(this).css("width")) * 6.5 - 10 + "px"
+      })
+    })
+
+    //每秒刷新一次
+    run();
+  }
+
+
+  // 设置文本内容
+  function setNumText() {
+    for (var i = 7; i > 0; i--) {
+      $(".week-content").append("<li data-time = " + i + "> 星期" + numberToZh(i) + "</li>")
+    }
+    for (var i = 12; i > 0; i--) {
+      $(".hours-content").append("<li data-time = " + i + ">" + numberToZh(i) + "时</li>")
+    }
+    for (var i = 60; i > 0; i--) {
+      $(".minutes-content").append("<li data-time = " + i + ">" + numberToZh(i) + "</li>")
+    }
+    for (var i = 60; i > 0; i--) {
+      $(".seconds-content").append("<li data-time = " + i + ">" + numberToZh(i) + "</li>")
+    }
+  }
+
+  // 数字大小写转换
+  function numberToZh(num) {
+    var zh = ["零", "壹", "贰", "叁", "肆", "伍", "陆", "柒", "捌", "玖", "拾", "佰", "仟", "万"];
+    var res = "";
+    if (num <= 10) {
+      res = zh[num];
+    } else if (num < 20) {
+      var bits = num % 10;
+      res = zh[10] + zh[bits];
+    } else if (num < 100) {
+      var bits = num % 10;
+      var decade = parseInt(num / 10);
+      if (bits == 0) {
+        res = zh[decade] + zh[10] + "整";
+      } else {
+        res = zh[decade] + zh[10] + zh[bits];
+      }
+
+    }
+    return res;
+  }
+
+  // 刷新轮盘
+  function run() {
+    clearInterval(timer);
+    var date = new Date();//获取本地时间
+    // 分别获取时分秒年
+    var week = date.getDay();
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    var seconds = date.getSeconds();
+
+    // 计算对应的旋转角度差
+    // rotateIndexH 为定义的全局变量，存储了小时的旋转圈数
+    // rotateIndexM、rotateIndexS 同理为分、秒的
+    // week
+    var weekRote = 360 / 7 * (week);
+
+    // hours
+    var hoursRote = 360 / 12 * (hours) + rotateIndexH * 360;
+
+    // minites secondes
+    var tempDeg = 360 / 60;
+    var minutesRote = tempDeg * (minutes) + rotateIndexM * 360;
+    var secondsRote = tempDeg * (seconds) + rotateIndexS * 360;
+    //var secondsRote = tempDeg * (seconds + 1) + rotateIndexS*360; // 加一是为了滚到位置再变色，去掉会先变色再滚到位置
+
+    // 旋转 秒 的位置
+    $(".seconds-wrapper").css("transform", "rotate(" + secondsRote + "deg)");
+
+    // 点亮 由于时间是从0开始计数的所以这里判断
+    var secondDot = seconds == 0 ? 60 : seconds;
+    var minuteDot = minutes == 0 ? 60 : minutes;
+    var hourDot = hours == 0 ? 24 : hours;
+    var weekDot = hours == 0 ? 7 : week;
+    // $(".hour-content li[data-time="+hourDot+"]").addClass("active").next("li").removeClass("active");
+    // $(".minutes-content li[data-time="+minuteDot+"]").addClass("active").prev("li").removeClass("active");
+    //$(".seconds-content li[data-time='"+secondDot+"']").addClass("active").next("li").removeClass("active");
+
+    //为了节省性能，每当秒满60时，才去指向时、分的
+    // if (seconds == 59 || rotateIndexH == 0) {
+    //   $(".week-wrapper").css("transform", "rotate(" + weekRote + "deg)");
+    //   $(".hours-wrapper").css("transform", "rotate(" + hoursRote + "deg)");
+    //   $(".minutes-wrapper").css("transform", "rotate(" + minutesRote + "deg)");
+    //
+    //   //给当前时间的节点添加active 类 （这里 练一下选择器所以写成了一句。）
+    //   $(".week-content li[data-time=" + weekDot + "]").parents("ul:first").children("li[class='active']").removeClass("active").end().end().addClass("active");
+    //   $(".hours-content li[data-time=" + hourDot + "]").parents("ul:first").children("li[class='active']").removeClass("active").end().end().addClass("active");
+    //   $(".minutes-content li[data-time=" + minuteDot + "]").parents("ul:first").children("li[class='active']").removeClass("active").end().end().addClass("active");
+    // }
+
+
+    //加速旋转
+    $(".week-wrapper").css("transform", "rotate(" + weekRote + "deg)");
+      $(".hours-wrapper").css("transform", "rotate(" + hoursRote + "deg)");
+      $(".minutes-wrapper").css("transform", "rotate(" + minutesRote + "deg)");
+
+      //给当前时间的节点添加active 类 （这里 练一下选择器所以写成了一句。）
+      $(".week-content li[data-time=" + weekDot + "]").parents("ul:first").children("li[class='active']").removeClass("active").end().end().addClass("active");
+      $(".hours-content li[data-time=" + hourDot + "]").parents("ul:first").children("li[class='active']").removeClass("active").end().end().addClass("active");
+      $(".minutes-content li[data-time=" + minuteDot + "]").parents("ul:first").children("li[class='active']").removeClass("active").end().end().addClass("active");
+
+
+    // 秒时每秒都需要更新的
+    $(".seconds-content li[data-time=" + secondDot + "]").parents("ul:first").children("li[class='active']").removeClass("active").end().end().addClass("active");
+
+    // 旋转圈数加一（解决360°转到0°时的bug）
+    hours === 11 ? rotateIndexH++ : 0;
+    minutes === 59 ? rotateIndexM++ : 0;
+    seconds === 59 ? rotateIndexS++ : 0;
+
+    // 让函数一秒钟执行一次
+    var timer = setTimeout(run, 1000);
+  }
+
+  // 干支纪年法
+  function toAncientYear(year) {
+    var sky = ["", "辛", "壬", "癸", "甲", "乙", "丙", "丁", "戊", "己", "庚"];
+    var land = ["", "酉", "戌", "亥", "子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申"];
+
+    // 用年份除以10得数中余数相对应的便是天干
+    var one = year % 10;
+    // 用年份除以12得数中余数相对应的便是地支
+    var two = year % 12;
+
+    var res = sky[one] + land[two];
+    return res;
+  }
+
+  //时间转时辰
+  function toAncientHours(num) {
+    var res = "";
+    switch (num) {
+      case 1: res = "子"; break;
+      case 2: res = "丑"; break;
+      case 3: res = "寅"; break;
+      case 4: res = "卯"; break;
+      case 5: res = "辰"; break;
+      case 6: res = "巳"; break;
+      case 7: res = "午"; break;
+      case 8: res = "未"; break;
+      case 9: res = "申"; break;
+      case 10: res = "酉"; break;
+      case 11: res = "戌"; break;
+      case 12: res = "亥"; break;
+    }
+    return res;
+  }
+</script>
+</html>

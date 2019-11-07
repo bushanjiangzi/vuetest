@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>getUserMedia</title>
+  <style>
+    body{
+      margin: 0;
+      padding: 0;
+    }
+    #box{
+      height: 936px;
+      background: #9094D2;
+      padding: 200px;
+    }
+  </style>
+</head>
+<body>
+  <div id="box">
+    <img src="./static/img/bg.jpg" alt="">
+  </div>
+<script>
+  // let width=document.body.clientWidth;
+  // let height=document.body.clientHeight;
+  let width = window.screen.availWidth;
+  let height = window.screen.availHeight;
+  console.log('width:',width);
+  console.log('height:',height);
+  var navigator = navigator;
+  var u = navigator.userAgent;
+  var ua = navigator.userAgent.toLowerCase(); //获取浏览器标识并转换为小写
+  var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1; //android终端
+  var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+  console.log(navigator);
+  console.log(u);
+  console.log(ua);
+  if(isiOS){
+    console.log('ios系统输出');
+  }else{
+    console.log('android系统输出');
+  }
+
+  navigator.mediaDevices.enumerateDevices()
+    .then(function (devices) {
+      console.log(devices);
+    })
+    .catch(function (err) {
+      console.log(err.name + ": " + err.message);
+    });
+</script>
+</body>
+</html>

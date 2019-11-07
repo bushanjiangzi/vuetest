@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>练习</title>
+</head>
+<body>
+    <div id="box">
+      <input type="text" ref="input1">
+      <button @click="refs">click</button>
+    </div>
+    <script src="js/jquery.js"></script>
+    <script src="js/vue.js"></script>
+<script>
+   var refs=new Vue({
+    el:'#box',
+    data:{
+
+    },
+    methods:{
+      refs:function () {
+        this.$refs.input1.value='jiangzi';
+        this.$refs.input1.style.color='red';
+        this.$refs.input1.onkeydown=function () {
+          console.log('按下键盘了')
+        };
+      }
+    }
+  });
+  $(function () {
+      // console.log(x);
+      // let x=1;
+
+    refs.$refs.input1.onkeydown=function () {
+      console.log('按下键盘了')
+    };
+  })
+</script>
+</body>
+</html>

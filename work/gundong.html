@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>滚动</title>
+    <style>
+      *{
+        margin: 0;
+        padding: 0;
+      }
+      .scroll{
+        max-width: 1080px;
+        margin: 0 auto;
+        position: relative;
+      }
+      .right{
+        width: 200px;
+        background: yellowgreen;
+        height: 820px;
+        position: fixed;
+        /*left: 0;*/
+        /*top: 0;*/
+        overflow: hidden;
+      }
+      .left{
+        margin: 0 0 0 200px;
+        background: blueviolet;
+        position: relative;
+        width: 1000px;
+      }
+      .left div{
+        height: 1200px;
+      }
+      .right li{
+        height: 300px;
+      }
+      .right li:nth-child(2n){
+        background: red;
+      }
+      .right > div{
+        width: 100%;
+        overflow: auto;
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: 0;
+      }
+    </style>
+</head>
+<body>
+<div style="height: 200px;background: black;z-index:200;">header</div>
+<div class="scroll" >
+  <div class="right">
+    <div>
+      <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+  </div>
+  <div class="left">
+    <div>
+      右边
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>async函数</title>
+</head>
+<body>
+  <div>async</div>
+<script>
+  console.log("<<<<<<<--------->>>>>>>");
+  function timeout(ms) {
+    return new Promise((resolve)=>{
+      setTimeout(resolve,ms);
+    })
+  }
+  async function asyncPrint(value,ms) {
+    await timeout(ms);
+    console.log(value);
+  }
+  asyncPrint("Hello async",500);
+
+  console.log("<<<<<<<--------->>>>>>>");
+  async function timeout2(ms) {
+    await new Promise((resolve)=>{
+      setTimeout(resolve,ms);
+    })
+  }
+  async function asyncPrint2(value,ms) {
+    await timeout2(ms);
+    console.log(value);
+  }
+  asyncPrint2("Hello async1",600);
+
+  async function getText(url) {
+    let response=await fetch(url);
+    let html=response.text();
+    console.log(html);
+  }
+  // getText("https://baidu.com");
+  getText("http://localhost:63342/jiang001/workTech/es6%E8%AF%AD%E6%B3%95/1.generator.html?_ijt=ipasmsdg6e5467vof9taoommiq");
+</script>
+</body>
+</html>

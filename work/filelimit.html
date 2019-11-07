@@ -1,0 +1,35 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <script type="text/javascript">
+    var isIE = /msie/i.test(navigator.userAgent) && !window.opera;
+  </script>
+</head>
+<body>
+<!--<input type="file" class="file" name="contractFileName" style="width: 500px;" onchange="fileChange(this)"/>-->
+<input type="file" class="file" name="contractFileName" style="width: 500px;" id="fileUp" onchange="rong.fileUp('fileUp',2)"/>
+
+</body>
+<script src="js/rong.js"></script>
+<script>
+  // rong.fileUp("fileUp");
+
+  let files=window.document.querySelector('.file');
+  console.log('files',files);
+  console.log('files.value',files.value);
+
+  document.write(Date());
+  document.write(new Date());
+  let time=new Date();
+  // alert(time.getTime());
+  navigator.geolocation.getCurrentPosition(pos=>{
+    let latitude = pos.coords.latitude;
+    let longitude = pos.coords.longitude;
+    console.log('地理位置：',latitude,longitude);
+    alert('地理位置：'+pos);
+  },error => {
+    alert(error.code);
+    console.log(error.code);
+  })
+</script>
+</html>
