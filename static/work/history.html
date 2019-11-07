@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>搜索历史</title>
+  <style>
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4.6667rem;
+      background: #5ECDAF;
+      z-index: 1000;
+      padding: 0 1.25rem;
+      display: flex;
+      text-align: center;
+      line-height: 4.6667rem;
+    }
+    .header .form {
+      width: 100%;
+      margin: 10px 0;
+      height: 3rem;
+      background: #fff;
+      border-radius: 0.4167rem;
+      position: relative;
+    }
+    .search {
+      position: absolute;
+      left: 1.25rem;
+      top: 0.8333rem;
+      width: 1.2143rem;
+      height: 1.2143rem;
+      background-size: 1.2143rem;
+    }
+    .form input {
+      display: block;
+      background: none;
+      border: none;
+      outline: none;
+      padding: 0.8333rem 3.5rem;
+      font-size: 1.25rem;
+      color: #7D7D7D;
+      width: 66%;
+    }
+    .search-btn {
+      width: 5.1667rem;
+      color: #FFFFFF;
+      font-size: 1.5rem;
+      text-align: right;
+    }
+    .cancel {
+      position: absolute;
+      right: 0px;
+      top: 0.6667rem;
+      width: 2.6667rem;
+      height: 2.6667rem;
+      background-size: 2rem;
+    }
+    .content {
+      padding:5rem 0px 0 0px;
+      font-size:1.1667rem;
+    }
+    .history-title{
+      display:flex;
+      margin:0.8333rem 0 0 1.25rem;
+    }
+    .history-title img{
+      margin-right:0.8333rem;
+    }
+    .history {
+      display: inline-block;
+      font-size: 1rem;
+      margin: 0.8333rem 1.25rem;
+      background: #F8F8F8;
+      padding: 0px 1.6667rem;
+      color: #000000;
+      height: 2.5833rem;
+      line-height: 2.5833rem;
+      border-radius: 1.3333rem;
+      overflow: hidden;
+    }
+
+  </style>
+</head>
+<body>
+<div id="search">
+  <div class="header">
+    <div class="form">
+      <span class="search"></span>
+      <input type="text" class="input" placeholder="请输入查找的内容" autofocus maxlength="26" onkeyup="value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5\ ]/g,'')"/>
+      <span class="cancel" style="display:none;"></span>
+    </div>
+    <div class="search-btn">search</div>
+  </div>
+  <div class="content">
+    <div class="history-title">
+      <div>
+      </div>
+      <div>搜索历史</div>
+    </div>
+    <span v-for="item in history" class="history" v-on:click="historyBtn(item)">{{item}}</span>
+    <div class="history-box history-title" style="display: none;">清空历史记录</div>
+    <div class="hidden" style="display: none;">userId</div>
+
+  </div>
+
+</div>
+</body>
+
+<script src="js/vue.js"></script>
+<script src="js/jquery.js"></script>
+<script>
+  var Search=new Vue({
+    el: '#search',
+    data: {
+      searHistory: '搜索历史',
+      history: []
+    },
+    methods: {
+      //点击搜索历史
+      historyBtn: function(item){
+        console.log(item);
+        $('.input').val(item);
+        // search();
+      }
+    }
+  });
+
+  $(function () {
+    var inputValue = '';
+    curValue = '';
+    var userID = $('.hidden').text();//取得ID
+    var getRecord = window.localStorage.getItem("record" + userID);//根据用户ID取到记录
+    var recordArr1 = [];
+    var recordArr2 = new Array(10);
+
+    $('.input').on('keyup', function (event) {
+      // search();
+      if (event.keyCode == 13) {
+        searchFun();
+        addHistory();
+      }
+    })
+
+    //点击删除input框的内容
+    $('.cancel').on('click', function () {
+      $('.input').val('');
+      $('.cancel').hide();
+      $('.content').show();
+      $('.search-body').hide();
+    })
+
+
+    //点击搜索,同时将搜索记录下来
+    $('.search-btn').on('click', function () {
+      searchFun();
+      addHistory();
+    });
+
+    //搜索请求方法
+    var searchFun = function () {
+      curValue = $('.input').val();
+      console.log(curValue);
+      //将输入的肩括号用转义字符代替
+      curValue = curValue.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      console.log(curValue);
+      if (curValue) {
+        $('.history').show();
+        $('.history-box').show();
+        //将数据存到本地数组中
+        if (getRecord == null) {
+          if (curValue) {
+            var index = recordArr1.indexOf(curValue);
+            if (index > -1) {
+              recordArr1.splice(index, 1);
+            }
+            recordArr1.unshift(curValue);
+            window.localStorage.setItem("record" + userID, recordArr1);
+          }
+        } else {
+          if (curValue) {
+            var index = recordArr2.indexOf(curValue);
+            if (index > -1) {
+              recordArr2.splice(index, 1);
+            }
+            recordArr2.unshift(curValue);
+            window.localStorage.setItem("record" + userID, recordArr2);
+          }
+        }
+        //发送请求获取搜索结果
+        $.get('url', { key: curValue}, function (res) {
+          //console.log(res);
+          Search.doctors = res.doctors;
+          if (res.doctors.length > 0) {
+            $('.content').hide();
+            $('.search-body').show();
+          } else {
+            alert('搜索不到"' + curValue + '"');
+          }
+        })
+      }
+    };
+
+    //添加到搜索历史中
+    var addHistory = function () {
+      getRecord = window.localStorage.getItem("record" + userID);
+      if (getRecord == null) {
+        return;
+      }
+      else {
+        $('.history-box').show();
+        recordArr2 = getRecord.split(',');
+        for (var i = 0; i < recordArr2.length; i++) {
+          if (recordArr2[i] == '' || recordArr2[i] == null || typeof (recordArr2[i]) == undefined) {
+            recordArr2.splice(i, 1);
+            i = i - 1;
+          }
+        }
+
+      }
+
+      if (recordArr2.length > 10) {
+        recordArr2.length = 10;
+      }
+      Search.history = recordArr2;
+      console.log("Arr1:"+recordArr1);
+      console.log("Arr2:"+recordArr2);
+    };
+    addHistory();
+
+    //清空历史记录
+    $('.history-box').click(function () {
+      window.localStorage.removeItem("record" + userID);
+      window.localStorage.removeItem(recordArr1);
+      recordArr1 = [];
+      recordArr2 = [];
+      console.log(recordArr1);
+      $('.history').hide();
+      $('.history-box').hide();
+    })
+
+  })
+</script>
+</html>

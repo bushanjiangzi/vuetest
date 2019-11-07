@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>城市选择列表</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      background: #fbfafa;
+      margin: 0;
+      padding: 0;
+    }
+
+    #box {
+      width: 100%;
+      height: 100%;
+      margin: 0 auto;
+    }
+
+    ul,li {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .search-header {
+      /*position: relative;*/
+      height: 2.6667rem;
+      background: #F2F2F2;
+      z-index: 1000;
+      margin: 0.8333rem 1.25rem;
+      display: flex;
+      text-align: center;
+      line-height: 2.6667rem;
+      border-radius: 1.25rem;
+    }
+
+    .search-header .form {
+      width: 100%;
+      display: flex;
+      height: 100%;
+      border-radius: 0.4167rem;
+      position: relative;
+    }
+
+    .search-btn {
+      width: 3.5rem;
+      height: 2.6667rem;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 1.25rem;
+      width: 1.25rem;
+      height: 1.25rem;
+      background-size: 1.25rem;
+    }
+
+    .cancel {
+      width: 1.25rem;
+      height: 1.25rem;
+      vertical-align: middle;
+      background-size: 1.25rem;
+      border-radius: 50%;
+      margin-left: 0.25rem;
+      font-size: 20px;
+    }
+
+    .shade-box{
+      position: fixed;
+      top: 68px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 100;
+      background: rgba(0,0,0,0.6);
+    }
+    .search-city-box {
+      position: absolute;
+      top: 2.6667rem;
+      border: 0.0833rem solid #E5E5E5;
+      border-bottom: none;
+      background: #fff;
+      /*width: 100%;*/
+      border-radius: 0.4167rem;
+      max-height: 24.6667rem;
+      overflow: hidden;
+      right: 50px;
+      left: 20px;
+      margin: 0;
+      padding: 0;
+      z-index: 300;
+      overflow-y:auto;
+    }
+
+    .search-city-li {
+      height: 3rem;
+      border-bottom: 0.0833rem solid #E5E5E5;
+    }
+
+    .form input {
+      display: block;
+      background: #F2F2F2;
+      border: none;
+      outline: none;
+      padding: 0.75rem 2.9167rem 0.75rem 0.8333rem;
+      font-size: 12px;
+      color: #9D9D9D;
+      width: 70%;
+      border-radius: 1.25rem;
+      text-align: center;
+    }
+
+    .position-city {
+      height: 3.5rem;
+      line-height: 3.5rem;
+      padding: 0 0.4167rem 0 1.25rem;
+      border-top: 0.0833rem solid #E5E5E5;
+      border-bottom: 0.08333rem solid #E5E5E5;
+    }
+
+    .showLetter span {
+      width: 4.1667rem;
+      height: 4.1667rem;
+      line-height: 4.1667rem;
+      font-size: 2.5rem;
+    }
+
+    .container {
+      margin: 0 1.25rem;
+      height: 35.3333rem;
+    }
+
+    .letter {
+      width: auto;
+      position: fixed;
+      top: 5rem;
+      right: 0.8333rem;
+      text-align: center;
+    }
+
+    .letter ul {
+      list-style-type: none;
+    }
+
+    .letter ul li a {
+      text-decoration: none;
+      color: #5ECDAF;
+      font-size: 0.6667rem;
+    }
+
+    .host-city {
+      display: inline-block;
+      color: #5ECDAF;
+      font-size: 0.6667rem;
+      width: 2.3333rem;
+      height: 3.5rem;
+      overflow: hidden;
+    }
+
+    .city {
+      height: 100%;
+    }
+
+    .city-list {
+      margin-right: 0.8333rem;
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .city-list .city-letter {
+      font-size: 1.25rem;
+      display: inline-block;
+      padding-top: 1.25rem;
+      padding-bottom: 0.4167rem;
+      color: #5ECDAF;
+      width: 100%;
+    }
+
+    .city-list p {
+      color: #000000;
+      font-size: 1rem;
+      width: 28%;
+      height: 2.5rem;
+      line-height: 33px;
+      text-align: center;
+      margin: 0.4167rem 0.8333rem 0.4167rem 0;
+      overflow: hidden;
+      border: 0.0833rem solid #E5E5E5;
+      cursor: pointer;
+    }
+
+    .city-list .city_selected {
+      border: 0.0833rem solid #5ECDAF;
+    }
+
+  </style>
+</head>
+<body>
+
+<div id="box">
+  <!--城市索引查询-->
+  <div class="search-header">
+    <div class="form">
+      <span class="search-btn"><span class="search-icon">search</span></span>
+      <input type="text" class="input" placeholder="输入要搜索的城市" autofocus maxlength="24"/>
+    </div>
+    <div class="shade-box" v-show="shade"></div>
+    <ul class="search-city-box" style="display:none;" >
+      <li class="search-city-li" v-for="city in cityList" v-on:click="searchCityBtn(city)">{{city.name}}</li>
+    </ul>
+  </div>
+  <div class="position-city">
+    <div>
+      <span>当前城市:</span>
+      <span class="curr-selected-city"></span>
+      <span class="cancel" style="display:none;">&times;</span>
+    </div>
+  </div>
+  <!--城市列表-->
+  <div class="letter">
+          <ul>
+            <li><a href="#热门城市1" class="host-city">热门城市</a></li>
+            <li><a href="#热门城市1" class="host-city"></a></li>
+            <li><a href="#A1">A</a></li>
+            <li><a href="#B1">B</a></li>
+            <li><a href="#C1">C</a></li>
+            <li><a href="#D1">D</a></li>
+            <li><a href="#E1">E</a></li>
+            <li><a href="#F1">F</a></li>
+            <li><a href="#G1">G</a></li>
+            <li><a href="#H1">H</a></li>
+            <li><a href="#J1">J</a></li>
+            <li><a href="#K1">K</a></li>
+            <li><a href="#L1">L</a></li>
+            <li><a href="#M1">M</a></li>
+            <li><a href="#N1">N</a></li>
+            <li><a href="#P1">P</a></li>
+            <li><a href="#Q1">Q</a></li>
+            <li><a href="#R1">R</a></li>
+            <li><a href="#S1">S</a></li>
+            <li><a href="#T1">T</a></li>
+            <li><a href="#W1">W</a></li>
+            <li><a href="#X1">X</a></li>
+            <li><a href="#Y1">Y</a></li>
+            <li><a href="#Z1">Z</a></li>
+          </ul>
+        </div>
+  <div class="container">
+      <div class="city">
+        <div class="city-list" v-for="cityDetail in cityInfo">
+          <span class="city-letter" :id="cityDetail.name+1">{{cityDetail.name}}</span>
+          <p v-bind:data-id="city.code" v-for="city in cityDetail.cities" @click="cityBtn(city)" :class="{city_selected:citySelect===city.code}">{{city.name}}</p>
+        </div>
+    </div>
+  </div>
+
+</div>
+</body>
+
+<script src="js/jquery.js"></script>
+<script src="js/vue.js"></script>
+<script>
+
+  var Drl = new Vue({
+    el: '#box',
+    data: {
+      shade:false,
+      cityInfo: [],
+      cityList: [],
+      degreeOn: true,
+      citySelect: '-1'
+    },
+    methods: {
+      //点击城市
+      cityBtn: function (city) {
+        this.citySelect = city.code;
+        cityCode = city.code;
+        // $('.tab-city').text(city.name);
+        $('.curr-selected-city').text(city.name);
+        //显示删除按钮
+        $('.cancel').show();
+
+      },
+      //点击搜索的城市
+      searchCityBtn: function (city) {
+        $('.tab-city').text(city.name);
+        $('.curr-selected-city').text(city.name);
+        this.shade = false;
+        cityCode = city.code;
+        $('.cancel').show();
+        $('.search-city-box').hide();
+      }
+    }
+
+  })
+
+  $(function () {
+    // var comprehensive = 1;
+    cityCode = '';
+    //删除已选择的城市
+    var cityList = $('.city-list p');
+    $('.cancel').on('click', function () {
+      cityList.removeClass('city-selected');
+      $('.curr-selected-city').text('');
+      $('.tab-city').text('选择区域');
+      cityCode = '';
+      Drl.citySelect = -1;
+
+      $('.cancel').hide();
+    })
+
+
+    //点击搜索城市
+    $('.search-btn').on('click', function () {
+      searchCity();
+      Drl.shade = true;
+    })
+    $('input').on('keyup', function (event) {
+      //console.log(event.keyCode);
+      searchCity();
+      Drl.shade = true;
+      var cityName = $('input').val();
+      if (cityName) {
+        if (event.keyCode == 13) {
+          searchCity();
+          if (Drl.cityList.length == 0) {
+            alert('没找到' + cityName + '这个城市！');
+          }
+        }
+      }
+      else {
+        $('.search-city-box').hide();
+        Drl.shade = false;
+
+      }
+
+      if (Drl.cityList.length == 0 | !cityName){
+        Drl.shade = false;
+      }
+    })
+
+    //搜索城市请求方法
+    var searchCity = function (city) {
+      var cityName = $('input').val();
+      console.log(cityName);
+      if (cityName) {
+        var cityInfo = Drl.cityInfo;
+        //筛选city的对象
+        var cityArr = [];
+        //遍历结果对象
+        for (var i = 1; i < cityInfo.length; i++) {
+          for (var j = 0; j < cityInfo[i].cities.length; j++) {
+            var cityIndex = cityInfo[i].cities[j].name.indexOf(cityName);
+            if (cityIndex >= 0) {
+              var cityObj = {};
+              cityObj.code = cityInfo[i].cities[j].code;
+              cityObj.name = cityInfo[i].cities[j].name;
+              cityArr.push(cityObj);
+            }
+          }
+        }
+        console.log(cityArr);
+        Drl.cityList = cityArr;
+        $('.search-city-box').show();
+      }
+    }
+
+    //读取本地城市json文件
+    $.getJSON("static/city.json", function (data) {
+      console.log(data);
+      Drl.cityInfo = data;
+    })
+  })
+</script>
+</html>

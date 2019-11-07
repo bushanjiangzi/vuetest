@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Title</title>
+  <style>
+    .qr-code {
+      text-align: center;
+      padding-top: 60px;
+    }
+  </style>
+</head>
+<body>
+    <div class="qr-code">
+      <div id="qrcode"></div>
+    </div>
+
+<script src="js/jquery.js"></script>
+<script src="js/jquery.qrcode.js"></script>
+<script src="js/utf.js"></script>
+<script>
+  $(function () {
+    var qrUrl = "https://www.cnblogs.com/bushan/"
+    var logoUrl = '../static/img/bg0.png';
+
+    //生成二维码
+    $('#qrcode').qrcode({
+      render: "canvas",
+      text: qrUrl,
+      width: "250",               //二维码的宽度
+      height: "250",              //二维码的高度
+      background: "#ffffff",       //二维码的后景色
+      foreground: "#000000",        //二维码的前景色
+      src: logoUrl           //二维码中间的图片
+    });
+
+  })
+</script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>分页滑屏</title>
+  <link href="css/swiper.min.css" rel="stylesheet" />
+  <style>
+    html,body{
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      margin: 0;
+    }
+    .swiper-box, .swiper-container {
+      width: 100%;
+      height: 100%;
+    }
+    .touch1 {
+      background-color: yellow;
+    }
+
+    .touch2 {
+      background-color: green;
+    }
+
+    .touch3 {
+      background-color: red;
+    }
+
+    .touch4 {
+      background-color: blue;
+    }
+  </style>
+</head>
+<body>
+<div class="swiper-box">
+  <div class="swiper-container">
+    <div class="swiper-wrapper">
+      <div class="swiper-slide touch1">Slide 1</div>
+      <div class="swiper-slide touch2">Slide 2</div>
+      <div class="swiper-slide touch3">Slide 3</div>
+      <div class="swiper-slide touch4">Slide 4</div>
+    </div>
+    <!-- 如果需要分页器 -->
+    <div class="swiper-pagination"></div>
+
+  </div>
+</div>
+<script src="js/jquery.js"></script>
+<script src="js/swiper.min.js"></script>
+<script>
+  $(function () {
+    var mySwiper = new Swiper('.swiper-container', {
+      direction: 'vertical', // 垂直切换选项
+      loop: true, // 循环模式选项
+
+      // 如果需要分页器
+      pagination: {
+        el: '.swiper-pagination'
+      },
+
+    })
+  })
+</script>
+</body>
+</html>
