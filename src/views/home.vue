@@ -39,7 +39,7 @@
     },
     mounted(){
       commen.hello();
-      commen.name('fei');
+      commen.name('xiao xue');
     }
   }
 </script>
