@@ -80,7 +80,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 #abc {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -94,6 +94,9 @@ export default {
     padding: 0;
   }
   .bar-tab .tab-item.active, .bar-tab .tab-item:active {
-    color: #0894ec;
+    color: #929292;
+  }
+  .router-link-exact-active{
+    color: #0894ec !important;
   }
 </style>
