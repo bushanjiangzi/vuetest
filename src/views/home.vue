@@ -9,7 +9,12 @@
       <span style="color: red">{{ authorName }}</span>
     </h2>
     <h4>
-      <a href="https://www.cnblogs.com/bushan/" target="_blank">查看我的博客</a>
+      <a href="https://www.cnblogs.com/bushan/" target="_blank">我的博客</a>
+      <a href="https://github.com/bushanjiangzi/" target="_blank">GitHub</a>
+      <!--<div>-->
+        <!--<span>GitHub:</span>-->
+        <!--<a href="https://github.com/bushanjiangzi/" target="_blank">GitHub</a>-->
+      <!--</div>-->
     </h4>
     <hr>
     <div class="router-box">
@@ -28,13 +33,12 @@
 <script>
   import commen from "../js/commen.js"
   export default {
-    name: 'HelloWorld',
+    name: 'home',
     data () {
       return {
-        msg: 'Welcome to Your Vue.js App!',
+        msg: 'Welcome to My App!',
         author:'author:',
         authorName:'jiangzi',
-
       }
     },
     mounted(){
@@ -59,6 +63,7 @@
   }
   a {
     color: #42b983;
+    padding: 0 10px;
   }
   .router-box{
     margin: 5px;
